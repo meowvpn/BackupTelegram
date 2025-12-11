@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO_URL="https://raw.githubusercontent.com/SEU_USUARIO/BackupTelegram/main"
+REPO_URL="https://raw.githubusercontent.com/meowvpn/BackupTelegram/main"
 
 echo "======================================"
 echo " INSTALANDO SISTEMA DE BACKUP TELEGRAM "
