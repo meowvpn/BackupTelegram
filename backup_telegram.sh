@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ===== CONFIGURAÇÕES =====
-BOT_TOKEN="7702327683:AAFDE78WLaUlced53963xy-zeMSXUqtA2JU"
-CHAT_ID="5833273722"
+BOT_TOKEN="COLOQUE_SEU_TOKEN_AQUI"
+CHAT_ID="COLOQUE_SEU_CHAT_ID_AQUI"
 DATA=$(date '+%Y-%m-%d_%H-%M')
 BACKUP_DIR="/root/backup_temp"
 BACKUP_FILE="/root/backup_$DATA.zip"
