@@ -1,28 +1,36 @@
 #!/bin/bash
 
-# ===== CONFIGURAÇÕES =====
-BOT_TOKEN="COLOQUE_SEU_TOKEN_AQUI"
-CHAT_ID="COLOQUE_SEU_CHAT_ID_AQUI"
+BOT_TOKEN="TOKEN_AQUI"
+CHAT_ID="CHAT_AQUI"
+
+BT_DIR="/root/backtel"
+LOCAIS="$BT_DIR/locais.txt"
+
 DATA=$(date '+%Y-%m-%d_%H-%M')
-BACKUP_DIR="/root/backup_temp"
-BACKUP_FILE="/root/backup_$DATA.zip"
+TEMP_DIR="$BT_DIR/temp"
+ZIP_FILE="$BT_DIR/backup_$DATA.zip"
 
-# Limpa pasta temporária
-rm -rf "$BACKUP_DIR"
-mkdir -p "$BACKUP_DIR"
+rm -rf "$TEMP_DIR"
+mkdir -p "$TEMP_DIR"
 
-# ===== COPIANDO ARQUIVOS =====
-cp /usr/local/etc/xray/config.json "$BACKUP_DIR/" 2>/dev/null
+# Copia todos os locais configurados
+while read caminho; do
+    [ -z "$caminho" ] && continue
+    if [ -f "$caminho" ]; then
+        cp "$caminho" "$TEMP_DIR/"
+    elif [ -d "$caminho" ]; then
+        cp -r "$caminho" "$TEMP_DIR/"
+    fi
+done < "$LOCAIS"
 
-mkdir -p "$BACKUP_DIR/BOTSSH"
-cp -r /root/BOTSSH/* "$BACKUP_DIR/BOTSSH/" 2>/dev/null
+# Compacta tudo
+cd "$TEMP_DIR"
+zip -r "$ZIP_FILE" . >/dev/null
 
-# ===== GERANDO ZIP =====
-cd "$BACKUP_DIR"
-zip -r "$BACKUP_FILE" . >/dev/null
+# Envia ao Telegram
+curl -F document=@"$ZIP_FILE" \
+"https://api.telegram.org/bot$BOT_TOKEN/sendDocument?chat_id=$CHAT_ID&caption=Backup%20($DATA)"
 
-# ===== ENVIANDO PRO TELEGRAM =====
-curl -F document=@"$BACKUP_FILE" \
-     "https://api.telegram.org/bot$BOT_TOKEN/sendDocument?chat_id=$CHAT_ID&caption=Backup%20($DATA)"
-
-rm -rf "$BACKUP_DIR"
+# Remove backup após enviar
+rm -rf "$TEMP_DIR"
+rm -f "$ZIP_FILE"
